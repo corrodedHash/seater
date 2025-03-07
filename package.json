@@ -10,7 +10,8 @@
     "test": " mocha"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "chai": "^5.2.0",
@@ -20,6 +21,8 @@
   },
   "mocha": {
     "check-leaks": true,
-    "spec": ["src/**/*.spec.mjs"]
+    "spec": [
+      "src/**/*.spec.mjs"
+    ]
   }
 }

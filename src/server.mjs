@@ -13,7 +13,7 @@ import cookieParser from 'cookie-parser'
  */
 
 function roomModifiers(rooms, users) {
-    const app = express()
+    const app = express.Router()
 
     app.get("/", (req, res) => {
         // TODO: Do not send back all of room info, censor users down to only id
@@ -40,9 +40,23 @@ function roomModifiers(rooms, users) {
         room.waiting_room.splice(waiting_index, 1)
         user.waiting_rooms.splice(user_waiting_index, 1)
         room.users.push(user)
+        user.rooms.push(room.id)
+        res.end()
 
     })
     return app
+}
+
+function userRoomAuth(users) {
+    return function userAuth(req, res, next) {
+        const u = users.match(req)
+        if (u === undefined) {
+            res.status(401).end()
+            return
+        }
+        res.locals.user = u
+        next()
+    }
 }
 
 /**
@@ -51,40 +65,9 @@ function roomModifiers(rooms, users) {
  * @param {UserManagement} users
  */
 function roomPath(rooms, users) {
-    const app = express()
+    const app = express.Router()
 
-    app.use(function userRoomAuth(req, res, next) {
-        const u = users.match(req)
-        if (u === undefined) {
-            res.status(401)
-            res.end()
-            return
-        }
-        res.locals.user = u
-        next()
-    })
-
-    app.use("/:room_id", function roomIDExtractor(req, res, next) {
-        /** @type {User} */
-        const user = res.locals.user
-        if (!user.rooms.includes(req.params.room_id)) {
-            res.status(404).end()
-            return
-        }
-        res.locals.room = rooms.get_room(req.params.room_id)
-        next()
-    }, roomModifiers(rooms, users))
-
-    app.get('/', (req, res) => {
-        /** @type {User} */
-        const user = res.locals.user
-        res.send(rooms.get_rooms().filter(v => user.rooms.includes(v.id)))
-    })
-
-    app.post("/", (req, res) => {
-        res.send({ "id": rooms.create_room(res.locals.user) })
-    })
-
+    app.use(userRoomAuth(users))
 
     app.put('/join/:room_id', (req, res) => {
         /** @type {User} */
@@ -98,9 +81,37 @@ function roomPath(rooms, users) {
             res.status(400).end();
             return
         }
+
         room.waiting_room.push(user.id)
         user.waiting_rooms.push(req.params.room_id)
+
+        res.status(200)
+        res.send("Done")
     })
+
+    app.get('/', (req, res) => {
+        /** @type {User} */
+        const user = res.locals.user
+        res.send(rooms.get_rooms().filter(v => user.rooms.includes(v.id)))
+    })
+
+    app.post("/", (req, res) => {
+        res.status(200)
+        res.json({ "id": rooms.create_room(res.locals.user) })
+    })
+
+    app.use("/:room_id", function roomIDExtractor(req, res, next) {
+        /** @type {User} */
+        const user = res.locals.user
+        if (!user.rooms.includes(req.params.room_id)) {
+            res.status(404).end()
+            return
+        }
+        res.locals.room = rooms.get_room(req.params.room_id)
+        next()
+    }, roomModifiers(rooms, users))
+
+
 
     return app
 }
@@ -114,6 +125,10 @@ export default function startApp() {
 
     app.get('/', (req, res) => {
         res.send('Hello World!')
+    })
+
+    app.get('/user', userRoomAuth(users), (req, res) => {
+        res.json(res.locals.user)
     })
 
     app.get('/token', (req, res) => {
