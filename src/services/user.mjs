@@ -1,14 +1,8 @@
 import * as crypto from "node:crypto";
 
 /** @import {Request} from 'express' */
+/** @import { User } from '../exchangeData' */
 
-/**
- * 
- * @typedef {Object} User
- * @property {string} id
- * @property {string[]} rooms
- * @property {string[]} waiting_rooms
- */
 
 export class UserManagement {
     /** @type User[] */

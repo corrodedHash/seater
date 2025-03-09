@@ -1,7 +1,6 @@
 import express from "express";
 import { UserManagement } from "./services/user.mjs";
-/** @import {User} from './services/user.mjs' */
-/** @import {Room} from './services/room.mjs' */
+/** @import {User, Room} from './exchangeData' */
 import { RoomManagement } from "./services/room.mjs";
 import cookieParser from 'cookie-parser'
 
@@ -26,6 +25,11 @@ function roomModifiers(rooms, users) {
         const admin_user = res.locals.user
         /** @type {Room} */
         const room = res.locals.room
+
+        if (!room.admins.includes(admin_user.id)) {
+            res.status(401).end()
+            return
+        }
         const user = users.get_user(req.params.user_id)
         const waiting_index = room.waiting_room.indexOf(user.id)
         if (waiting_index === -1) {
@@ -39,7 +43,7 @@ function roomModifiers(rooms, users) {
         }
         room.waiting_room.splice(waiting_index, 1)
         user.waiting_rooms.splice(user_waiting_index, 1)
-        room.users.push(user)
+        room.users.push(user.id)
         user.rooms.push(room.id)
         res.end()
 
@@ -47,6 +51,9 @@ function roomModifiers(rooms, users) {
     return app
 }
 
+/**
+ * @param {UserManagement} users
+ */
 function userRoomAuth(users) {
     return function userAuth(req, res, next) {
         const u = users.match(req)

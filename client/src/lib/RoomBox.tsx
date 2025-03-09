@@ -9,7 +9,7 @@ function RoomBox() {
 
     const rooms = useSelector((state: RootState) => state.room.value)
     const navigate = useNavigate()
-    const handleShare = (roomID: string) => (e) => {
+    const handleShare = (roomID: string) => (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
         e.stopPropagation()
         navigate(`/share/${roomID}`)
     }

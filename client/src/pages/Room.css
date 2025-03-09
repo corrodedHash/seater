@@ -1,0 +1,9 @@
+.waitingUser {
+    font-weight: lighter;
+}
+
+.adminUser {
+    font-weight: bolder;
+}
+
+.normalUser {}
