@@ -57,7 +57,7 @@ function App() {
       <div>{userID}</div>
       <RoomBox />
       {waiting_rooms.map(v => {
-        return <div className="waitingRoom">{v}</div>
+        return <div className="waitingRoom" key={v}>{v}</div>
       })}
       <button onClick={addRoomClick}>Add room</button>
     </>

@@ -3,7 +3,15 @@ import { useNavigate, useParams } from "react-router";
 
 
 async function manage_join(room_id: string) {
-    await fetch(`/api/room/join/${room_id}`, { method: "PUT" })
+    let response = await fetch(`/api/room/join/${room_id}`, { method: "PUT" })
+    if (response.status === 401) {
+        await fetch('/api/token')
+        response = await fetch(`/api/room/join/${room_id}`, { method: "PUT" })
+    }
+    console.log(response.status)
+    if (response.status >= 400) {
+        throw Error(`${response.status}: ${await response.text()}`)
+    }
 
 }
 
@@ -12,7 +20,7 @@ function Join() {
     const navigate = useNavigate();
     const { room_id } = useParams();
     const [errorMessage, setErrorMessage] = useState(undefined as (string | undefined))
-    console.log(room_id)
+
     useEffect(() => {
         if (room_id === undefined) {
             navigate('/');

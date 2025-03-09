@@ -21,7 +21,7 @@ function Share() {
         <>
             <div className="qrbox">
                 {dataURL ? <img src={dataURL} height="300" width="300"></img> : ""}
-                <div>URL: {target_url}</div>
+                <div>{target_url}</div>
             </div>
         </>
     )
