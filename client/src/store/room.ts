@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 
 interface RoomSummary {
@@ -13,10 +13,10 @@ export const roomSlice = createSlice({
         value: [] as RoomSummary[]
     },
     reducers: {
-        addRoom: (state, action) => {
+        addRoom: (state, action: PayloadAction<RoomSummary>) => {
             state.value.push(action.payload)
         },
-        setRooms: (state, action) => {
+        setRooms: (state, action: PayloadAction<RoomSummary[]>) => {
             state.value = action.payload
         }
     }
