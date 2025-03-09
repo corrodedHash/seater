@@ -1,11 +1,11 @@
 import './App.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { addRoom, setRooms } from './store/room'
-import { RootState } from './store'
-import RoomBox from './lib/RoomBox'
+import { addRoom, setRooms } from '../store/room'
+import { RootState } from '../store'
+import RoomBox from '../lib/RoomBox'
 import { useEffect } from 'react'
-import { setUserID } from './store/user'
-import { setWaitingRooms } from './store/waiting_room'
+import { setUserID } from '../store/user'
+import { setWaitingRooms } from '../store/waiting_room'
 
 
 async function setup_user_info() {
@@ -33,24 +33,6 @@ async function setup_user_info() {
 
 }
 
-async function manage_join() {
-  const urlParams = new URL(window.location.href);
-  const join_regex = /^\/join\/(?<room_id>[\w-]+)$/
-  const join_match = urlParams.pathname.match(join_regex)
-  if (join_match === null) {
-    return
-  }
-  console.dir(join_match)
-  const room_id = join_match.groups['room_id']
-  try {
-    await fetch(`/api/room/join/${room_id}`, { method: "PUT" }).then(v => v.json())
-  }
-  catch {
-
-  }
-}
-
-
 function App() {
   const dispatch = useDispatch();
 
@@ -72,7 +54,6 @@ function App() {
 
   return (
     <>
-      hello
       <div>{userID}</div>
       <RoomBox />
       {waiting_rooms.map(v => {

@@ -1,0 +1,4 @@
+.qrbox {
+    display:flex;
+    flex-direction: column;
+}

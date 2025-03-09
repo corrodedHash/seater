@@ -19,14 +19,15 @@
 .roomDisplay .roomCount {
     font-family: monospace;
     background-color: lightgray;
-    margin: -1em 0;
-    padding: 1em 0;
 }
 
 .hasWaiting {
     position: relative;
 }
-
+.playerBox {
+    display: flex;
+    flex-direction: column;
+}
 .hasWaiting::after {
     content: "";
     position: absolute;
