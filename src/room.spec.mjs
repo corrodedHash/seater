@@ -3,6 +3,7 @@ import startApp from './server.mjs'
 import supertest from 'supertest'
 import { assert } from 'chai';
 
+
 function parseCookieArray( /** @type string[] */ cookies) {
   const header_regex = /(?<cookie_name>[\w-]+)=(?<cookie_value>[\w-]+);/;
   const c = cookies.map((v) => {
@@ -18,28 +19,28 @@ describe('Rooms', function () {
     const request = supertest(app)
 
     it('should require authentication', async function () {
-      const a = await (request.post('/room'))
+      const a = await request.post('/room')
       assert.equal(a.statusCode, 401)
     });
 
 
     it('should be retrievable', async function () {
-      const a = await request.get('/token');
-      const cookies = parseCookieArray(a.headers['set-cookie']);
-      const auth_cookies = [
-        `user_id=${cookies['user_id']}`,
-        `token=${cookies['token']}`
-      ]
+      const agent = supertest.agent(app)
+      const a = await agent.get('/token');
+      console.log(a.headers)
+      // const cookies = parseCookieArray(a.headers['set-cookie']);
+      // const auth_cookies = [
+      //   `user_id=${cookies['user_id']}`,
+      //   `token=${cookies['token']}`
+      // ]
 
-      const b = await request
+      const b = await agent
         .post('/room')
-        .set('Cookie', auth_cookies)
         .expect(200);
 
       const room_id = b.body.id
-      const c = await request
+      const c = await agent
         .get(`/room/${room_id}`)
-        .set('Cookie', auth_cookies)
         .expect(200);
       assert.equal(c.body.id, room_id)
     })
@@ -50,6 +51,7 @@ describe('Rooms', function () {
     const request = supertest(app)
 
     it('should work', async function () {
+
       const creator_auth = await request.get('/token')
         .then(v => parseCookieArray(v.headers['set-cookie']))
         .then(v => [

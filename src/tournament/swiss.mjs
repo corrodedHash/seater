@@ -14,14 +14,14 @@ export class SwissTournament {
     #players;
 
     /** @type {SwissRound[]} */
-    #rounds;
+    rounds;
 
     /**
      * @param {string[]} players
      */
     constructor(players) {
         this.#players = players;
-        this.#rounds = []
+        this.rounds = []
     }
 
     rivals() {
@@ -49,7 +49,7 @@ export class SwissTournament {
             addRival(player1, player2);
             addRival(player2, player1);
         };
-        this.#rounds
+        this.rounds
             .flatMap((v) => v.pairings)
             .forEach((v) => recordMatch(...v.players));
         return result;
@@ -65,7 +65,7 @@ export class SwissTournament {
             return result;
         };
 
-        const rounds = this.#rounds.map((round) => {
+        const rounds = this.rounds.map((round) => {
             const result = standing_template();
 
             const updates = round.pairings.flatMap((v) => {
@@ -143,7 +143,7 @@ export class SwissTournament {
             if (hasLoner) {
                 if (v.length === 0) {
 
-                    const previous_loners = this.#rounds
+                    const previous_loners = this.rounds
                         .flatMap((v) => v.pairings)
                         .filter((v) => v.players.length === 1)
                         .map((v) => v.players[0]);
