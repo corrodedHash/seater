@@ -30,17 +30,20 @@ function roomModifiers(rooms, users) {
             res.status(401).end()
             return
         }
+
         const user = users.get_user(req.params.user_id)
         const waiting_index = room.waiting_room.indexOf(user.id)
         if (waiting_index === -1) {
             res.status(400).end()
             return
         }
+
         const user_waiting_index = user.waiting_rooms.indexOf(room.id)
         if (user_waiting_index === -1) {
             res.status(500).end()
             return
         }
+
         room.waiting_room.splice(waiting_index, 1)
         user.waiting_rooms.splice(user_waiting_index, 1)
         room.users.push(user.id)
