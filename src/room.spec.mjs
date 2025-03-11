@@ -27,12 +27,6 @@ describe('Rooms', function () {
     it('should be retrievable', async function () {
       const agent = supertest.agent(app)
       const a = await agent.get('/token');
-      console.log(a.headers)
-      // const cookies = parseCookieArray(a.headers['set-cookie']);
-      // const auth_cookies = [
-      //   `user_id=${cookies['user_id']}`,
-      //   `token=${cookies['token']}`
-      // ]
 
       const b = await agent
         .post('/room')
@@ -43,6 +37,7 @@ describe('Rooms', function () {
         .get(`/room/${room_id}`)
         .expect(200);
       assert.equal(c.body.id, room_id)
+
     })
   });
 
@@ -51,47 +46,35 @@ describe('Rooms', function () {
     const request = supertest(app)
 
     it('should work', async function () {
+      const creator_agent = supertest.agent(app)
+      const joiner_agent = supertest.agent(app)
 
-      const creator_auth = await request.get('/token')
+      await creator_agent.get('/token')
+      const { userid: joiner_id } = await joiner_agent.get('/token')
         .then(v => parseCookieArray(v.headers['set-cookie']))
-        .then(v => [
-          `user_id=${v['user_id']}`,
-          `token=${v['token']}`
-        ])
-      const { userid: joiner_id, cookies: joiner_auth } = await request.get('/token')
-        .then(v => parseCookieArray(v.headers['set-cookie']))
-        .then(v => ({
-          userid: v['user_id'], cookies: [
-            `user_id=${v['user_id']}`,
-            `token=${v['token']}`
-          ]
-        }))
+        .then(v => ({ userid: v['user_id'] }))
 
-      const room_id = await request
+      const room_id = await creator_agent
         .post('/room')
-        .set('Cookie', creator_auth)
         .expect(200)
         .then(v => v.body.id);
 
-      await request
+      await joiner_agent
         .get(`/room/${room_id}`)
-        .set('Cookie', joiner_auth)
         .expect(404);
 
-      await request
+      await joiner_agent
         .put(`/room/join/${room_id}`)
-        .set('Cookie', joiner_auth)
         .expect(200);
 
-      await request
+      await creator_agent
         .put(`/room/${room_id}/accept/${joiner_id}`)
-        .set('Cookie', creator_auth)
         .expect(200);
 
-      await request
+      await joiner_agent
         .get(`/room/${room_id}`)
-        .set('Cookie', joiner_auth)
         .expect(200);
+
     })
   });
 });

@@ -8,7 +8,6 @@ export class RoomManagement {
     /** @type Room[] */
     #rooms = []
 
-
     create_room(/** @type User */ user) {
         const new_room_id = crypto.randomUUID();
         this.#rooms.push({ id: new_room_id, users: [user.id], admins: [user.id], waiting_room: [] })
@@ -20,6 +19,9 @@ export class RoomManagement {
         return this.#rooms
     }
 
+    /**
+     * @param {string} id
+     */
     get_room(id) {
         return this.#rooms.find(v => v.id === id)
     }

@@ -19,6 +19,9 @@ export class UserManagement {
         return {user, token}
     }
 
+    /**
+     * @param {string} user_id
+     */
     get_user(user_id){
         return this.#users.find(v=> v.id === user_id)
     }

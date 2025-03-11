@@ -1,3 +1,11 @@
+export interface Match {
+    player1: string
+    player2: string
+    player1won: boolean[]
+}
+export interface Matches {
+    rounds: Match[][]
+}
 
 export interface User {
     id: string
