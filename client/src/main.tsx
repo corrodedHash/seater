@@ -1,14 +1,14 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './pages/App.tsx'
+import App from '@/pages/App.tsx'
 import { BrowserRouter, Route, Routes } from 'react-router'
 
-import store from './store'
+import store from '@/store'
 import { Provider } from 'react-redux'
-import Join from './pages/Join.tsx'
-import Share from './pages/Share.tsx'
-import Room from './pages/Room.tsx'
+import Join from '@/pages/Join.tsx'
+import Share from '@/pages/Share.tsx'
+import Room from '@/pages/Room.tsx'
 
 
 

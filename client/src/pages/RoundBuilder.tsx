@@ -1,5 +1,5 @@
 import "./Room.css";
-import { Matches, Match } from "../../../src/exchangeData";
+import { Matches, Match } from "@shared/exchangeData";
 
 function RoundBuilder() {
   const players = [..."abcdefgh"];

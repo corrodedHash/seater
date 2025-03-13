@@ -2,7 +2,7 @@ import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
 import { addRoom, setRooms } from "@/store/room";
 import { RootState } from "@/store";
-import RoomBox from "@/lib/RoomBox";
+import RoomBox from "@/components/RoomBox";
 import { useEffect } from "react";
 import { setUserID } from "@/store/user";
 import { setWaitingRooms } from "@/store/waiting_room";
