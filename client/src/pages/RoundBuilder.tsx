@@ -1,11 +1,9 @@
 import "./Room.css";
 import { Matches, Match } from "../../../src/exchangeData";
 
-function MatchesComponent() {
+function RoundBuilder() {
   const players = [..."abcdefgh"];
 
-  const previous_rounds: Matches = { rounds: [] };
-  const current_round: Match[] = []
   const pairings = Object.values(
     Object.groupBy(players, (_, i) => Math.floor(i / 2))
   );
@@ -24,4 +22,4 @@ function MatchesComponent() {
   );
 }
 
-export default MatchesComponent;
+export default RoundBuilder;

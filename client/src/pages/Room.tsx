@@ -1,9 +1,10 @@
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { RootState } from "@/store";
 import "./Room.css";
-import Matches from "./Matches";
+import MatchesComponent from "./Matches";
+import RoundBuilder from "./RoundBuilder";
 
 function Room() {
   const user = useSelector((v: RootState) => v.user.value);
@@ -57,7 +58,8 @@ function Room() {
       <div>{roomInfo.id}</div>
       {roomInfo.users.map(display_user)}
       <div>{roomInfo.waiting_room.map(waiting_user)}</div>
-      <Matches />
+      <MatchesComponent />
+      <RoundBuilder />
     </>
   );
 }
