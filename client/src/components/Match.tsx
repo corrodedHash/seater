@@ -2,11 +2,13 @@ import "./Match.css";
 function Match({
   players,
   chosenPlayers,
-  onPlayerChange,
+  onPlayerAdd,
+  onPlayerDrop,
 }: {
   players: string[];
   chosenPlayers: string[];
-  onPlayerChange: (a: string[]) => void;
+  onPlayerAdd: (a: string, total: string[]) => void;
+  onPlayerDrop: (a: string, total: string[]) => void;
 }) {
   let myChosenPlayers = [...chosenPlayers];
   const playerEntry = (playerID: string) => {
@@ -16,7 +18,7 @@ function Match({
         <button
           onClick={() => {
             myChosenPlayers = myChosenPlayers.filter((v) => v !== playerID);
-            onPlayerChange([...myChosenPlayers]);
+            onPlayerDrop(playerID, [...myChosenPlayers]);
           }}
         >
           X
@@ -32,7 +34,7 @@ function Match({
           <select
             onChange={(q) => {
               myChosenPlayers.push(q.target.value);
-              onPlayerChange([...myChosenPlayers]);
+              onPlayerAdd(q.target.value, [...myChosenPlayers]);
             }}
           >
             {players.map((q) => (
