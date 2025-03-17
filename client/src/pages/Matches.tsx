@@ -61,102 +61,74 @@ export const matchesSlice = createSlice({
     addPlayerPairing: (
       state,
       action: PayloadAction<{ id: number; player: string }>
-    ) => {
-      console.dir(action);
-      const unique_pairings = () =>
-        filterPairings(state.pairings, (q) => q !== action.payload.player);
-      const pairings = state.uniquePairing ? unique_pairings() : state.pairings;
-      const changed_pairing = pairings.find((v) => v.id === action.payload.id);
-      if (changed_pairing === undefined) {
-        return state;
-      }
-      if (changed_pairing.players.includes(action.payload.player)) {
-        return state;
-      }
-      if (changed_pairing.players.length >= 2) {
-        console.warn(
-          `Tried to add player ${action.payload.player} to full pairing`
-        );
-        return state;
-      }
-      return {
-        ...state,
-        pairings: [
-          ...pairings.filter((v) => v.id !== action.payload.id),
-          {
-            ...changed_pairing,
-            players: [...changed_pairing.players, action.payload.player],
-          },
-        ].toSorted((a, b) => a.id - b.id),
-      };
-    },
+    ) =>
+      modifyPairing(state, action.payload.id, (changed_pairing) => {
+        if (changed_pairing.players.includes(action.payload.player)) {
+          return changed_pairing;
+        }
+        if (changed_pairing.players.length >= 2) {
+          console.warn(
+            `Tried to add player ${action.payload.player} to full pairing`
+          );
+          return changed_pairing;
+        }
+        return {
+          ...changed_pairing,
+          players: [...changed_pairing.players, action.payload.player],
+        };
+      }),
     removePlayerPairing: (
       state,
       action: PayloadAction<{ id: number; player: string }>
-    ) => {
-      const changed_pairing = state.pairings.find(
-        (v) => v.id === action.payload.id
-      );
-      if (changed_pairing === undefined) {
-        return state;
-      }
-      return {
-        ...state,
-        pairings: [
-          ...state.pairings.filter((v) => v.id !== action.payload.id),
-          {
-            ...changed_pairing,
-            players: changed_pairing.players.filter(
-              (v) => v !== action.payload.player
-            ),
-          },
-        ].toSorted((a, b) => a.id - b.id),
-      };
-    },
+    ) =>
+      modifyPairing(state, action.payload.id, (changed_pairing) => {
+        return {
+          ...changed_pairing,
+          players: changed_pairing.players.filter(
+            (v) => v !== action.payload.player
+          ),
+        };
+      }),
     addMatchHistory: (
       state,
       action: PayloadAction<{ id: number; won: boolean }>
-    ) => {
-      const changed_pairing = state.pairings.find(
-        (v) => v.id === action.payload.id
-      );
-      if (changed_pairing === undefined) {
-        return state;
-      }
-      return {
-        ...state,
-        pairings: [
-          ...state.pairings.filter((v) => v.id !== action.payload.id),
-          {
-            ...changed_pairing,
-            matchHistory: [...changed_pairing.matchHistory, action.payload.won],
-          },
-        ].toSorted((a, b) => a.id - b.id),
-      };
-    },
-    removeMatchHistory: (state, action: PayloadAction<{ id: number }>) => {
-      const changed_pairing = state.pairings.find(
-        (v) => v.id === action.payload.id
-      );
-      if (changed_pairing === undefined) {
-        return state;
-      }
-      return {
-        ...state,
-        pairings: [
-          ...state.pairings.filter((v) => v.id !== action.payload.id),
-          {
-            ...changed_pairing,
-            matchHistory: changed_pairing.matchHistory.slice(
-              0,
-              changed_pairing.matchHistory.length - 1
-            ),
-          },
-        ].toSorted((a, b) => a.id - b.id),
-      };
-    },
+    ) =>
+      modifyPairing(state, action.payload.id, (changed_pairing) => {
+        return {
+          ...changed_pairing,
+          matchHistory: [...changed_pairing.matchHistory, action.payload.won],
+        };
+      }),
+    removeMatchHistory: (state, action: PayloadAction<{ id: number }>) =>
+      modifyPairing(state, action.payload.id, (changed_pairing) => {
+        return {
+          ...changed_pairing,
+          matchHistory: changed_pairing.matchHistory.slice(
+            0,
+            changed_pairing.matchHistory.length - 1
+          ),
+        };
+      }),
   },
 });
+
+function modifyPairing(
+  state: MatchCreation,
+  id: number,
+  modification: (pairing: Pairing) => Pairing
+) {
+  const changed_pairing = state.pairings.find((v) => v.id === id);
+  if (changed_pairing === undefined) {
+    return state;
+  }
+  return {
+    ...state,
+    pairings: [
+      ...state.pairings.filter((v) => v.id !== id),
+      modification(changed_pairing),
+    ].toSorted((a, b) => a.id - b.id),
+  };
+}
 
 function filterPairings(
   pairings: Pairing[],
