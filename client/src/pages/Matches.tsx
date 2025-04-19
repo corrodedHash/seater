@@ -3,6 +3,8 @@ import { Matches, Match } from "../../../src/exchangeData";
 import MatchComponent from "@/components/Match";
 import { useReducer, useState } from "react";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+import { SwissTournament } from 'tournament'
 type PairingID = number;
 
 interface Pairing {
@@ -152,6 +154,7 @@ function MatchesComponent() {
   if (!match.pairings.find((v) => v.players.length < 2)) {
     dispatch(matchesSlice.actions.add());
   }
+
   return (
     <>
       {match.pairings.map((v) => (

@@ -1,0 +1,1 @@
+export { SwissTournament } from './swiss.mjs';
