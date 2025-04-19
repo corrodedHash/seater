@@ -29,13 +29,20 @@ function Room() {
   }
   const amAdmin = roomInfo.admins.includes(user);
 
+
+
+  const handleDelete = (u: string) => (_e: React.MouseEvent) => {
+    fetch(`/api/room/user/${room_id}/${u}`, { method: "DELETE" });
+  };
+
   const display_user = (u: string) => {
     const userClassName = roomInfo.admins.includes(u)
       ? "adminUser"
       : "normalUser";
+    const deleteButton = <button onClick={handleDelete(u)}>Delete</button>;
     return (
       <div className={userClassName} key={u}>
-        {u}
+        {u} {amAdmin ? deleteButton : ""}
       </div>
     );
   };

@@ -61,7 +61,7 @@ describe('Rooms', function () {
 
       await joiner_agent
         .get(`/room/${room_id}`)
-        .expect(404);
+        .expect(401);
 
       await joiner_agent
         .put(`/room/join/${room_id}`)
@@ -75,6 +75,57 @@ describe('Rooms', function () {
         .get(`/room/${room_id}`)
         .expect(200);
 
+    })
+  });
+  describe('Access control', function () {
+    const app = startApp()
+    const request = supertest(app)
+
+    it('should work', async function () {
+      const creator_agent = supertest.agent(app)
+      const joiner_agent = supertest.agent(app)
+
+      const { userid: creator_id } = await creator_agent.get('/token')
+        .then(v => parseCookieArray(v.headers['set-cookie']))
+        .then(v => ({ userid: v['user_id'] }))
+      const { userid: joiner_id } = await joiner_agent.get('/token')
+        .then(v => parseCookieArray(v.headers['set-cookie']))
+        .then(v => ({ userid: v['user_id'] }))
+
+      const room_id = await creator_agent
+        .post('/room')
+        .expect(200)
+        .then(v => v.body.id);
+
+      await joiner_agent
+        .delete(`/room/${room_id}/user/${creator_id}`)
+        .expect(401);
+
+    })
+  });
+  describe('Delete self', function () {
+    const app = startApp()
+    const request = supertest(app)
+
+    it('should work', async function () {
+      const creator_agent = supertest.agent(app)
+      // const joiner_agent = supertest.agent(app)
+
+      const { userid } = await creator_agent.get('/token')
+        .then(v => parseCookieArray(v.headers['set-cookie']))
+        .then(v => ({ userid: v['user_id'] }))
+
+      const room_id = await creator_agent
+        .post('/room')
+        .expect(200)
+        .then(v => v.body.id);
+
+      await creator_agent
+        .delete(`/room/${room_id}/user/${userid}`)
+        .expect(200);
+      await creator_agent
+        .delete(`/room/${room_id}/user/${userid}`)
+        .expect(401);
     })
   });
 });

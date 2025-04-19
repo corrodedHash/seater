@@ -19,7 +19,6 @@ function roomModifiers(rooms, users) {
         res.send(res.locals.room)
     })
 
-
     app.put("/accept/:user_id", (req, res) => {
         /** @type {User} */
         const admin_user = res.locals.user
@@ -50,6 +49,27 @@ function roomModifiers(rooms, users) {
         user.rooms.push(room.id)
         res.end()
 
+    })
+
+    app.delete('/user/:user_id', (req, res) => {
+        /** @type {User} */
+        const admin_user = res.locals.user
+        /** @type {Room} */
+        const room = res.locals.room
+
+        if (!room.admins.includes(admin_user.id)) {
+            res.status(401).end()
+            return
+        }
+
+        const user = users.get_user(req.params.user_id)
+        if (user === undefined) {
+            res.status(400).end()
+            return
+        }
+        room.users = room.users.filter((x) => x !== user.id)
+        user.rooms = user.rooms.filter((x) => x !== room.id)
+        res.end()
     })
 
     app.use('/matches', matches())
@@ -101,7 +121,7 @@ export function roomPath(rooms, users) {
         /** @type {User} */
         const user = res.locals.user
         if (!user.rooms.includes(req.params.room_id)) {
-            res.status(404).end()
+            res.status(401).end()
             return
         }
         res.locals.room = rooms.get_room(req.params.room_id)
