@@ -6,7 +6,9 @@
   "author": "",
   "type": "module",
   "main": "src/index.mjs",
+  "module": "nodenext",
   "scripts": {
+    "start": "node src/index.mjs",
     "test": " mocha"
   },
   "dependencies": {

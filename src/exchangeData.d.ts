@@ -15,6 +15,7 @@ export interface User {
 
 export interface Room {
     id: string
+    display_name: string
     admins: string[]
     users: string[]
     waiting_room: string[]

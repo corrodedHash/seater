@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface RoomSummary {
     id: string
+    display_name: string
     player_count: number
     waiting_count: number
 }

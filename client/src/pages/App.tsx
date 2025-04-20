@@ -26,6 +26,7 @@ async function setup_user_info() {
       .then((v) => v.json())
       .then((v) => ({
         id: v.id,
+        display_name: v.display_name,
         player_count: v.users.length,
         waiting_count: v.waiting_room.length,
       }))

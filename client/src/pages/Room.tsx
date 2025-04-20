@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import "./Room.css";
 import MatchesComponent from "@/pages/Matches";
-import RoundBuilder from "@/pages/RoundBuilder";
 
 function Room() {
   const user = useSelector((v: RootState) => v.user.value);
@@ -13,7 +12,7 @@ function Room() {
 
   const [roomInfo, setRoomInfo] = useState<
     | undefined
-    | { id: string; users: string[]; waiting_room: string[]; admins: string[] }
+    | { id: string; display_name: String; users: string[]; waiting_room: string[]; admins: string[] }
   >();
 
   useEffect(() => {
@@ -62,7 +61,7 @@ function Room() {
 
   return (
     <>
-      <div>{roomInfo.id}</div>
+      <div title={roomInfo.id}>{roomInfo.display_name}</div>
       {roomInfo.users.map(display_user)}
       <div>{roomInfo.waiting_room.map(waiting_user)}</div>
       <MatchesComponent />

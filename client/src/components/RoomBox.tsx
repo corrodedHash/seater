@@ -1,7 +1,7 @@
 
 import './RoomBox.css'
 import { useSelector } from 'react-redux'
-import { RootState } from '../store'
+import type { RootState } from '../store'
 import { useNavigate } from 'react-router'
 
 
@@ -16,7 +16,7 @@ function RoomBox() {
     return (
         <>
             {rooms.map((v) => <div className="roomDisplay" key={v.id} onClick={() => navigate(`/room/${v.id}`)}>
-                <span className="roomID" >{v.id}</span>
+                <span className="roomID" title={v.id}>{v.display_name}</span>
                 <span className="playerBox">
                     <span className="roomCount">{v.player_count}</span>
                     <span className="shareButton" onClick={handleShare(v.id)}>Share</span>

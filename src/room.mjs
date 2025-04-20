@@ -1,9 +1,10 @@
 import express from "express";
 import { UserManagement } from "./services/user.mjs";
-/** @import {User, Room} from './exchangeData' */
+/** @import {User, Room} from './exchangeData.js' */
 import { RoomManagement } from "./services/room.mjs";
 import { userRoomAuth } from "./middleware.mjs";
 import { matches } from "./matches.mjs";
+
 
 /**
  * 
@@ -19,7 +20,12 @@ function roomModifiers(rooms, users) {
         res.send(res.locals.room)
     })
 
-    app.put("/accept/:user_id", (req, res) => {
+    /**
+     * @param {any} req
+     * @param {any} res
+     * @param {() => void} next
+     */
+    function is_admin(req, res, next) {
         /** @type {User} */
         const admin_user = res.locals.user
         /** @type {Room} */
@@ -29,52 +35,72 @@ function roomModifiers(rooms, users) {
             res.status(401).end()
             return
         }
+        next()
+    };
+
+    app.put("/accept/:user_id", is_admin, (req, res) => {
+        /** @type {Room} */
+        const room = res.locals.room
 
         const user = users.get_user(req.params.user_id)
-        const waiting_index = room.waiting_room.indexOf(user.id)
-        if (waiting_index === -1) {
-            res.status(400).end()
+
+        const status = acceptUser(room, user);
+
+        if (status !== 0) {
+            res.status(status).end()
             return
         }
-
-        const user_waiting_index = user.waiting_rooms.indexOf(room.id)
-        if (user_waiting_index === -1) {
-            res.status(500).end()
-            return
-        }
-
-        room.waiting_room.splice(waiting_index, 1)
-        user.waiting_rooms.splice(user_waiting_index, 1)
-        room.users.push(user.id)
-        user.rooms.push(room.id)
         res.end()
 
     })
 
-    app.delete('/user/:user_id', (req, res) => {
-        /** @type {User} */
-        const admin_user = res.locals.user
+    app.delete('/user/:user_id', is_admin, (req, res) => {
         /** @type {Room} */
         const room = res.locals.room
-
-        if (!room.admins.includes(admin_user.id)) {
-            res.status(401).end()
-            return
-        }
 
         const user = users.get_user(req.params.user_id)
         if (user === undefined) {
             res.status(400).end()
             return
         }
-        room.users = room.users.filter((x) => x !== user.id)
-        user.rooms = user.rooms.filter((x) => x !== room.id)
+        deleteUser(room, user);
         res.end()
     })
 
     app.use('/matches', matches())
     return app
 }
+
+/**
+ * @param {Room} room
+ * @param {User} user
+ */
+function deleteUser(room, user) {
+    room.users = room.users.filter((/** @type {string} */ x) => x !== user.id);
+    user.rooms = user.rooms.filter((/** @type {string} */ x) => x !== room.id);
+}
+
+/**
+ * @param {Room} room
+ * @param {User} user
+ */
+function acceptUser(room, user) {
+    const waiting_index = room.waiting_room.indexOf(user.id)
+    if (waiting_index === -1) {
+        return 400
+    }
+
+    const user_waiting_index = user.waiting_rooms.indexOf(room.id)
+    if (user_waiting_index === -1) {
+        return 500
+    }
+    room.waiting_room.splice(waiting_index, 1);
+    user.waiting_rooms.splice(user_waiting_index, 1);
+    room.users.push(user.id);
+    user.rooms.push(room.id);
+    return 0
+}
+
 
 /**
  * 
@@ -99,8 +125,7 @@ export function roomPath(rooms, users) {
             return
         }
 
-        room.waiting_room.push(user.id)
-        user.waiting_rooms.push(req.params.room_id)
+        joinRoom(room, user);
 
         res.status(200)
         res.send("Done")
@@ -131,4 +156,13 @@ export function roomPath(rooms, users) {
 
 
     return app
+}
+
+/**
+ * @param {Room} room
+ * @param {User} user
+ */
+function joinRoom(room, user) {
+    room.waiting_room.push(user.id);
+    user.waiting_rooms.push(room.id);
 }
