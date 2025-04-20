@@ -18,5 +18,6 @@ export interface Room {
     display_name: string
     admins: string[]
     users: string[]
+    user_names: Record<string, string>
     waiting_room: string[]
 }

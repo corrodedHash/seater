@@ -29,6 +29,7 @@ async function setup_user_info() {
         display_name: v.display_name,
         player_count: v.users.length,
         waiting_count: v.waiting_room.length,
+        user_names: v.user_names,
       }))
   );
   const resolved_rooms = await Promise.all(room_promises);
@@ -58,7 +59,7 @@ function App() {
   async function addRoomClick() {
     const x = await fetch(`/api/room`, { method: "POST" });
     const room = await x.json();
-    dispatch(addRoom({ id: room.id, player_count: 1, waiting_count: 0 }));
+    dispatch(addRoom({ id: room.id, player_count: 1, waiting_count: 0, display_name: "<Unknown>", user_names: {} }));
   }
 
   return (

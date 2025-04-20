@@ -12,7 +12,7 @@ function Room() {
 
   const [roomInfo, setRoomInfo] = useState<
     | undefined
-    | { id: string; display_name: String; users: string[]; waiting_room: string[]; admins: string[] }
+    | { id: string; display_name: String; users: string[]; waiting_room: string[]; admins: string[]; user_names: Record<string, string> }
   >();
 
   useEffect(() => {
@@ -27,11 +27,15 @@ function Room() {
     return <> Loading ... </>;
   }
   const amAdmin = roomInfo.admins.includes(user);
+  console.log(roomInfo.admins, user)
 
 
 
   const handleDelete = (u: string) => (_e: React.MouseEvent) => {
-    fetch(`/api/room/user/${room_id}/${u}`, { method: "DELETE" });
+    fetch(`/api/room/${room_id}/user/${u}`, { method: "DELETE" });
+  };
+  const handleNameChange = (u: string) => (e: React.ChangeEvent) => {
+    fetch(`/api/room/${room_id}/user/${u}/name/${e.target.value}`, { method: "PUT" })
   };
 
   const display_user = (u: string) => {
@@ -41,7 +45,9 @@ function Room() {
     const deleteButton = <button onClick={handleDelete(u)}>Delete</button>;
     return (
       <div className={userClassName} key={u}>
-        {u} {amAdmin ? deleteButton : ""}
+        {u in roomInfo.user_names ? roomInfo.user_names[u] : u}
+        {amAdmin ? <input type="text" onChange={handleNameChange(u)} /> : ""}
+        {amAdmin ? deleteButton : ""}
       </div>
     );
   };

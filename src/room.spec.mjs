@@ -17,7 +17,6 @@ describe('Rooms', function () {
   describe('Create room', function () {
     const app = startApp()
     const request = supertest(app)
-
     it('should require authentication', async function () {
       const a = await request.post('/room')
       assert.equal(a.statusCode, 401)
@@ -26,7 +25,7 @@ describe('Rooms', function () {
 
     it('should be retrievable', async function () {
       const agent = supertest.agent(app)
-      const a = await agent.get('/token');
+      await agent.get('/token');
 
       const b = await agent
         .post('/room')

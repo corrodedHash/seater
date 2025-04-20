@@ -12,7 +12,7 @@ export class RoomManagement {
     create_room(/** @type User */ user) {
         const new_room_id = crypto.randomUUID();
         const display_name = unique_identifier(names.planes, this.#rooms.map(x => x.display_name))
-        this.#rooms.push({ id: new_room_id, users: [user.id], admins: [user.id], waiting_room: [], display_name: display_name })
+        this.#rooms.push({ id: new_room_id, users: [user.id], admins: [user.id], waiting_room: [], display_name: display_name, user_names: {} })
         user.rooms.push(new_room_id)
         return new_room_id;
     }

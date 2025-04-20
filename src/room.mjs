@@ -67,6 +67,22 @@ function roomModifiers(rooms, users) {
         res.end()
     })
 
+    app.put('/user/:user_id/name/:user_name', is_admin, (req, res) => {
+        /** @type {Room} */
+        const room = res.locals.room
+
+        /** @type {User} */
+        const user = users.get_user(req.params.user_id)
+        if (user === undefined) {
+            res.status(400).end()
+            return
+        }
+        const user_name = req.params.user_name
+
+        room.user_names[user.id] = user_name
+        res.end()
+    })
+
     app.use('/matches', matches())
     return app
 }

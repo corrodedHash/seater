@@ -9,7 +9,7 @@
   "module": "nodenext",
   "scripts": {
     "start": "node src/index.mjs",
-    "test": " mocha"
+    "test": "mocha"
   },
   "dependencies": {
     "express": "^4.21.2",

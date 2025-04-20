@@ -6,6 +6,7 @@ interface RoomSummary {
     display_name: string
     player_count: number
     waiting_count: number
+    user_names: Record<string, string>
 }
 
 export const roomSlice = createSlice({
