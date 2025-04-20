@@ -134,7 +134,8 @@ export function roomPath(rooms, users) {
     app.get('/', (req, res) => {
         /** @type {User} */
         const user = res.locals.user
-        res.send(rooms.get_rooms().filter(v => user.rooms.includes(v.id)))
+
+        res.send(user.rooms.map(v => rooms.get_room(v)))
     })
 
     app.post("/", (req, res) => {
