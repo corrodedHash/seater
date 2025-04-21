@@ -18,7 +18,7 @@ function smallMatchServer() {
 
 describe("Match management", function () {
   describe("Empty match", function () {
-    it("Has no rounds", async () => {
+    it("has no rounds", async () => {
       const r = await supertest(smallMatchServer()).get('/');
       assert.deepEqual(r.body.rounds, [])
     })
